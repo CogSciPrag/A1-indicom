@@ -1,0 +1,4 @@
+Item,Context Type,speaker1,speaker2,contextsentence,polarquestion,indirectanswer
+attn1,positive,Nina,Sam,On this trial please select the definitely yes rating.,“Should we get coffee?”,“It has caffeine in it.”
+attn2,negative,Olivia,Katie,Olivia and Katie are planning to go to the cinema.,On this trial please select the middle rating.,“It’s an action movie.”
+attn3,neutral,Peter,Kyle,Peter and Kyle want to decide what to buy at the grocery store.,“Should we get the canned tomatoes?”,On this trial please select the definitely no rating.
