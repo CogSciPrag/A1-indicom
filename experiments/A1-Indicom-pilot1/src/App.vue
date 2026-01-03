@@ -1,16 +1,19 @@
 <template>
   <Experiment title="indicom">
     <InstructionScreen :title="'Welcome'">
-      <p>Thank you for taking part in my study.</p> 
+      <p>Thank you for taking part in this study.</p> 
 
       <p>In this experiment, you will be shown small fictional dialogues each consisting of a context sentence, a question and an answer.</p>
 
-      <p>Your task is to read the scenario carefully and to rate whether you think the answer means „no“ or „yes“ on a scale from 1 („definitely no“) to 7 („definitely yes“).</p> 
+      <p>Your task is to read the scenario carefully and to rate whether you think the answer given to the question means “no” or “yes” on a scale from 1 (“definitely no”) to 7 (“definitely yes”).</p> 
+
+      <p>You must read all information presented with each scenario. There will be attention checks, which ask you to give a specific rating. </p>
     </InstructionScreen>
 
     <template v-for="(triple, tIndex) in sampledTriples">
       <template v-for="(trial, i) in triple">
-        <Screen :key="'t'+tIndex+'_i'+i">
+        <Screen :key="'t'+tIndex+'_i'+i" 
+                :progress="(tIndex * 4 + i + 1) / totalScreens">
           <Slide>
             
             <div class="context-box">
@@ -36,13 +39,26 @@
               <button @click="$magpie.saveAndNextScreen()">Submit</button>
             </p>
 
+            <div class="comment-container">
+              <label class="comment-label">
+                Comments (optional):
+              </label>
+
+              <textarea
+                class="comment-box"
+                :placeholder="'If anything was unclear or you have any feedback, you can leave it here.'"
+                v-model="$magpie.measurements['comment_' + tIndex + '_' + i]"
+              ></textarea>
+            </div>
+
             <Record
               :data="{
-                trialType: 'main',
+                trialType: trial.trialType,
                 key: 'trial_' + tIndex + '_' + i,
                 itemID: trial.Item,
                 contextType: trial['Context Type'],
                 rating: $magpie.measurements.rating,
+                comment: $magpie.measurements['comment'] || null,
                 speaker1: trial.speaker1,
                 speaker2: trial.speaker2
               }"
@@ -102,9 +118,14 @@ const sampledTriples = triples.map((triple, tIndex) => {
     return row || null; // placeholder so array length stays stable
   });
 
+  trials.forEach(t => (t.trialType = 'main'));
+
   //cycle so each triple gets a different attention check
   const ac = cleanAttention[tIndex % cleanAttention.length];
   
+  //mark trial type as attention check
+  ac.trialType = 'attention'; 
+
   //insert the attention check at the end of the triple
   trials.push(ac);
 
@@ -123,6 +144,7 @@ export default {
       sampledIDs: sampledIDs,
       triples: triples,
       sampledTriples: sampledTriples,
+      screensPerTriple: 4,
       attentionChecks: attentionChecks
     };
   },
@@ -132,6 +154,10 @@ export default {
     _() {
       return _;
     },
+
+    totalScreens() {
+      return this.sampledTriples.length * this.screensPerTriple;
+    }
   }
   
 };
@@ -152,4 +178,24 @@ export default {
 .question-block {
   margin-top: 30px;   
 }
+
+.comment-label {
+  display: block;
+  font-size: 0.9em;
+  color: #666;
+  margin-bottom: 6px;
+  margin-top: 60px;
+}
+
+.comment-box {
+  width: 60%;
+  min-height: 60px;   /* bigger box */
+  resize: vertical;    /* allow expansion but not horizontal chaos */
+  padding: 8px 10px;
+  font-size: 0.9em;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #fafafa;
+}
+
 </style>

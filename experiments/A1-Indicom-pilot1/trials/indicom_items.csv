@@ -5,7 +5,7 @@ Item,Context Type,speaker1,speaker2,contextsentence,polarquestion,indirectanswer
 2,positive,Alex,Bo,Alex and Bo are celebrating their 10th anniversary and want to treat themselves.,“Should we book that restaurant?”,“It’s expensive.”
 2,negative,Alex,Bo,Alex and Bo are on a budget and want to have a cheap dinner out.,“Should we book that restaurant?”,“It’s expensive.”
 2,neutral,Alex,Bo,Alex and Bo are talking about where to go for dinner. ,“Should we book that restaurant?”,“It’s expensive.”
-3,positive,Leo,Mia,Leo and Mia enjoy busy, energetic spots for their dates.,“Should we go to the new café downtown?”,“It’s crowded.”
+3,positive,Leo,Mia,Leo and Mia enjoy busy and energetic spots for their dates.,“Should we go to the new café downtown?”,“It’s crowded.”
 3,negative,Leo,Mia,Leo and Mia prefer quiet places when they go on dates.,“Should we go to the new café downtown?”,“It’s crowded.”
 3,neutral,Leo,Mia,Leo and Mia are debating where to go for coffee. ,“Should we go to the new café downtown?”,“It’s crowded.”
 4,positive,Anna,Mia,Anna and Mia love spicy food and always go for it.,“Should we order the special?”,“It’s spicy.”
@@ -15,10 +15,10 @@ Item,Context Type,speaker1,speaker2,contextsentence,polarquestion,indirectanswer
 5,negative,Dan,Alex,Dan and Alex live directly next to the train station - only a minute away.,“Should we go now?”,“The train leaves in ten minutes.”
 5,neutral,Dan,Alex,Dan and Alex are talking about when to leave for the train. ,“Should we go now?”,“The train leaves in ten minutes.”
 6,positive,Charlie,Millie,Charlie and Millie are throwing a party together and want to invite someone who will create a lively atmosphere.,“Should we invite Paul?”,“He’s very talkative.”
-6,negative,Charlie,Millie,Charlie and Millie are throwing a dinner party together and want a quiet, calm atmosphere.,“Should we invite Paul?”,“He’s very talkative.”
+6,negative,Charlie,Millie,Charlie and Millie are throwing a dinner party together and want a calm atmosphere.,“Should we invite Paul?”,“He’s very talkative.”
 6,neutral,Charlie,Millie,Charlie and Millie are debating whether or not to invite Paul. ,“Should we invite Paul?”,“He’s very talkative.”
 7,positive,John,Emma,John and Emma are skiers and love fresh snow when they go skiing together.,“Should we go to the mountains this weekend?”,“It’s snowing.”
-7,negative,John,Emma,John and Emma planned to hike, but they dislike slippery trails on their weekly hikes.,“Should we go to the mountains this weekend?”,“It’s snowing.”
+7,negative,John,Emma,John and Emma dislike slippery trails on their weekly hikes.,“Should we go to the mountains this weekend?”,“It’s snowing.”
 7,neutral,John,Emma,John and Emma are discussing their weekend plans.,“Should we go to the mountains this weekend?”,“It’s snowing.”
 8,positive,Peter,Anna,Peter and Anna enjoy museums and always appreciate a good deal.,“Should we visit the museum?”,“It’s free today.”
 8,negative,Peter,Anna,Peter  and Anna only like museums when they’re quiet and empty. ,“Should we visit the museum?”,“It’s free today.”
@@ -30,16 +30,16 @@ Item,Context Type,speaker1,speaker2,contextsentence,polarquestion,indirectanswer
 10,negative,Jamie,Tina,Jamie and Tina like sleeping in silence on their vacation.,“Should we book this hotel?”,“It’s near the main road.”
 10,neutral,Jamie,Tina,Jamie and Tina are booking a hotel for their next trip. ,“Should we book this hotel?”,“It’s near the main road.”
 11,positive,Tom,Lily,Tom and Lily always celebrate family events together. ,“Should we visit your parents this weekend?”,“It’s their anniversary.”
-11,negative,Tom,Lily,"Tom’s parents spend their anniversaries alone, and Tom and Lily are aware of that.",“Should we visit your parents this weekend?”,“It’s their anniversary.”
-11,neutral,Tom,Lily,Tom and Lily are considering visiting Tom’s parents over the weekend.,“Should we visit your parents this weekend?”,“It’s their anniversary.”
+11,negative,Tom,Lily,Lily’s parents always spend their anniversaries alone and Tom and Lily are aware of that.,“Should we visit your parents this weekend?”,“It’s their anniversary.”
+11,neutral,Tom,Lily,Tom and Lily are considering visiting Lily’s parents over the weekend.,“Should we visit your parents this weekend?”,“It’s their anniversary.”
 12,positive,Peter,Laura,Peter and Laura’s dog loves attention from people.,“Should we bring the dog?”,“There will be a lot of people there.”
 12,negative,Peter,Laura,Peter and Laura’s dog gets very nervous around crowds.,“Should we bring the dog?”,“There will be a lot of people there.”
-12,neutral,Peter,Laura,Peter and Laura are considering bringing their dog with them. ,“Should we bring the dog?”,“There will be a lot of people there.”
+12,neutral,Peter,Laura,Peter and Laura are considering bringing their dog to an event. ,“Should we bring the dog?”,“There will be a lot of people there.”
 13,positive,Paul,Anna,Paul and Anna love watching scary movies together.,“Should we watch the horror movie?”,“It’s supposed to be really scary.”
 13,negative,Paul,Anna,Paul and Anna get nightmares very easily.,“Should we watch the horror movie?”,“It’s supposed to be really scary.”
 13,neutral,Paul,Anna,Paul and Anna are trying to find a movie to watch together. ,“Should we watch the horror movie?”,“It’s supposed to be really scary.”
 14,positive,Lina,Sarah,Lina and Sarah’s trip is coming up soon and they need to book their flights before they get too expensive.,“Should we book the flight now?,“The prices fluctuate daily.”
-14,negative,Lina,Sarah,"Lina and Sarah are planning a trip together, and they want to wait for the best flight prices.",“Should we book the flight now?,“The prices fluctuate daily.”
+14,negative,Lina,Sarah,Lina and Sarah are planning a trip together and they want to wait for the best flight prices.,“Should we book the flight now?,“The prices fluctuate daily.”
 14,neutral,Lina,Sarah,Lina and Sarah are planning a trip together. ,“Should we book the flight now?,“The prices fluctuate daily.”
 15,positive,Chris,Lara,Chris and Lara want to form new healthy routines and start their day energized.,“Should we join the gym class?”,“It starts early in the morning.”
 15,negative,Chris,Lara,Chris and Lara aren’t morning people and don’t like early morning activities.,“Should we join the gym class?”,“It starts early in the morning.”
@@ -79,11 +79,11 @@ Item,Context Type,speaker1,speaker2,contextsentence,polarquestion,indirectanswer
 26,neutral,Lilly,Mia,Lilly and Mia are talking about their friend Martin.,“Do you think Martin is mad at me?”,“He was quiet today.”
 27,positive,Polly,Tim,Polly and Tim know that Sarah tends to stay late when she’s passionate about her work.,“Does Sarah like her new job?”,“She’s been working late every night.”
 27,negative,Polly,Tim,Polly and Tim know that Sarah only works late when she’s stressed.,“Does Sarah like her new job?”,“She’s been working late every night.”
-27,neutral,Polly,Tim,"Polly and Tim are talking about Sarah, who started a new position last month. ",“Does Sarah like her new job?”,“She’s been working late every night.”
+27,neutral,Polly,Tim,Polly and Tim know that Sarah started a new position last month.,“Does Sarah like her new job?”,“She’s been working late every night.”
 28,positive,Ben,Max,Ben and Max’s boss always brings baked goods when she is happy.,“Is the boss in a good mood today?”,“She brought donuts for everyone.”
 28,negative,Ben,Max,Ben and Max’s boss only brings baked goods when she is trying to apologize for bad news.,“Is the boss in a good mood today?”,“She brought donuts for everyone.”
 28,neutral,Ben,Max,Ben and Max are talking about their boss.,“Is the boss in a good mood today?”,“She brought donuts for everyone.”
-29,positive,Anna,David,Anna and David know detailed feedback means serious engagement.,“Did Professor Chen like your thesis proposal?”,“She gave me three pages of comments.”
+29,positive,Anna,David,Anna and David know detailed feedback means that the reader resonated with the material.,“Did Professor Chen like your thesis proposal?”,“She gave me three pages of comments.”
 29,negative,Anna,David,Anna and David think excessive comments signal major problems.,“Did Professor Chen like your thesis proposal?”,“She gave me three pages of comments.”
 29,neutral,Anna,David,Anna and David are talking about David’s thesis meeting.,“Did Professor Chen like your thesis proposal?”,“She gave me three pages of comments.”
 30,positive,Erik,Meredith,Erik and Meredith love Jake's spacious house and great parties.,“Are you going to the party on Saturday?”,“It's at Jake's place.”

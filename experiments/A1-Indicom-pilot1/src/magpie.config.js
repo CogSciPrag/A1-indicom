@@ -9,3 +9,4 @@ export default {
   mode: 'directLink',
   language: 'en'
 };
+ 
