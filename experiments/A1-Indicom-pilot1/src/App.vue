@@ -46,8 +46,8 @@
 
               <textarea
                 class="comment-box"
-                :placeholder="'If anything was unclear or you have any feedback, you can leave it here.'"
-                v-model="$magpie.measurements['comment_' + tIndex + '_' + i]"
+                :placeholder="'If anything was unclear or you have any feedback about this scenario, you can leave it here.'"
+                v-model="$magpie.measurements['comment']"
               ></textarea>
             </div>
 
