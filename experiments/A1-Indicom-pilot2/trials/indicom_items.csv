@@ -1,0 +1,91 @@
+Item,Context Type,speaker1,speaker2,contextsentence,polarquestion,indirectanswer
+1,positive,John,Mary,John and Mary are windsurfers and regularly surf together.,“Should we go to the beach today?”,“It’s windy.”
+1,negative,John,Mary,John and Mary want to tan at the beach together.,“Should we go to the beach today?”,“It’s windy.”
+1,neutral,John,Mary,John and Mary are talking about going to the beach.,“Should we go to the beach today?”,“It’s windy.”
+2,positive,Alex,Bo,Alex and Bo are celebrating their 10th anniversary and want to treat themselves.,“Should we book that restaurant?”,“It’s expensive.”
+2,negative,Alex,Bo,Alex and Bo are on a budget and want to have a cheap dinner out.,“Should we book that restaurant?”,“It’s expensive.”
+2,neutral,Alex,Bo,Alex and Bo are talking about where to go for dinner. ,“Should we book that restaurant?”,“It’s expensive.”
+3,positive,Leo,Mia,Leo and Mia enjoy busy and energetic spots for their dates.,“Should we go to the new café downtown?”,“It’s crowded.”
+3,negative,Leo,Mia,Leo and Mia prefer quiet places when they go on dates.,“Should we go to the new café downtown?”,“It’s crowded.”
+3,neutral,Leo,Mia,Leo and Mia are debating where to go for coffee. ,“Should we go to the new café downtown?”,“It’s crowded.”
+4,positive,Anna,Mia,Anna and Mia love spicy food and always go for it.,“Should we order the special?”,“It’s spicy.”
+4,negative,Anna,Mia,Anna and Mia both can’t handle spicy dishes.,“Should we order the special?”,“It’s spicy.”
+4,neutral,Anna,Mia,Anna and Mia are debating what to order for dinner.,“Should we order the special?”,“It’s spicy.”
+5,positive,Dan,Alex,Dan and Alex live approximately 10 minutes away from the train station.,“Should we go now?”,“The train leaves in ten minutes.”
+5,negative,Dan,Alex,Dan and Alex live directly next to the train station - only a minute away.,“Should we go now?”,“The train leaves in ten minutes.”
+5,neutral,Dan,Alex,Dan and Alex are talking about when to leave for the train. ,“Should we go now?”,“The train leaves in ten minutes.”
+6,positive,Charlie,Millie,Charlie and Millie are throwing a party together and want to invite someone who will create a lively atmosphere.,“Should we invite Paul?”,“He’s very talkative.”
+6,negative,Charlie,Millie,Charlie and Millie are throwing a dinner party together and want a calm atmosphere.,“Should we invite Paul?”,“He’s very talkative.”
+6,neutral,Charlie,Millie,Charlie and Millie are debating whether or not to invite Paul. ,“Should we invite Paul?”,“He’s very talkative.”
+7,positive,John,Emma,John and Emma are skiers and love fresh snow when they go skiing together.,“Should we go to the mountains this weekend?”,“It’s snowing.”
+7,negative,John,Emma,John and Emma dislike slippery trails on their weekly hikes.,“Should we go to the mountains this weekend?”,“It’s snowing.”
+7,neutral,John,Emma,John and Emma are discussing their weekend plans.,“Should we go to the mountains this weekend?”,“It’s snowing.”
+8,positive,Peter,Anna,Peter and Anna enjoy museums and always appreciate a good deal.,“Should we visit the museum?”,“It’s free today.”
+8,negative,Peter,Anna,Peter  and Anna only like museums when they’re quiet and empty. ,“Should we visit the museum?”,“It’s free today.”
+8,neutral,Peter,Anna,Peter and Anna are talking about what to do today.,“Should we visit the museum?”,“It’s free today.”
+9,positive,Kim,Eva,Kim and Eva enjoy modern art together.,“Should we visit the new gallery?”,“It’s all contemporary pieces.”
+9,negative,Kim,Eva,Kim and Eva only like classical art.,“Should we visit the new gallery?”,“It’s all contemporary pieces.”
+9,neutral,Kim,Eva,Kim and Eva are discussing which gallery to visit.,“Should we visit the new gallery?”,“It’s all contemporary pieces.”
+10,positive,Jamie,Tina,Jamie and Tina like the convenience of central locations when they go on vacation together.,“Should we book this hotel?”,“It’s near the main road.”
+10,negative,Jamie,Tina,Jamie and Tina like sleeping in silence on their vacation.,“Should we book this hotel?”,“It’s near the main road.”
+10,neutral,Jamie,Tina,Jamie and Tina are booking a hotel for their next trip. ,“Should we book this hotel?”,“It’s near the main road.”
+11,positive,Tom,Lily,Tom and Lily always celebrate family events together. ,“Should we visit your parents this weekend?”,“It’s their anniversary.”
+11,negative,Tom,Lily,Lily’s parents always spend their anniversaries alone and Tom and Lily are aware of that.,“Should we visit your parents this weekend?”,“It’s their anniversary.”
+11,neutral,Tom,Lily,Tom and Lily are considering visiting Lily’s parents over the weekend.,“Should we visit your parents this weekend?”,“It’s their anniversary.”
+12,positive,Peter,Laura,Peter and Laura’s dog loves attention from people.,“Should we bring the dog?”,“There will be a lot of people there.”
+12,negative,Peter,Laura,Peter and Laura’s dog gets very nervous around crowds.,“Should we bring the dog?”,“There will be a lot of people there.”
+12,neutral,Peter,Laura,Peter and Laura are considering bringing their dog to an event. ,“Should we bring the dog?”,“There will be a lot of people there.”
+13,positive,Paul,Anna,Paul and Anna love watching scary movies together.,“Should we watch the horror movie?”,“It’s supposed to be really scary.”
+13,negative,Paul,Anna,Paul and Anna get nightmares very easily.,“Should we watch the horror movie?”,“It’s supposed to be really scary.”
+13,neutral,Paul,Anna,Paul and Anna are trying to find a movie to watch together. ,“Should we watch the horror movie?”,“It’s supposed to be really scary.”
+14,positive,Lina,Sarah,Lina and Sarah’s trip is coming up soon and they need to book their flights before they get too expensive.,“Should we book the flight now?,“The prices fluctuate daily.”
+14,negative,Lina,Sarah,Lina and Sarah are planning a trip together and they want to wait for the best flight prices.,“Should we book the flight now?,“The prices fluctuate daily.”
+14,neutral,Lina,Sarah,Lina and Sarah are planning a trip together. ,“Should we book the flight now?,“The prices fluctuate daily.”
+15,positive,Chris,Lara,Chris and Lara want to form new healthy routines and start their day energized.,“Should we join the gym class?”,“It starts early in the morning.”
+15,negative,Chris,Lara,Chris and Lara aren’t morning people and don’t like early morning activities.,“Should we join the gym class?”,“It starts early in the morning.”
+15,neutral,Chris,Lara,Chris and Lara are deciding when to book a gym class.,“Should we join the gym class?”,“It starts early in the morning.”
+16,positive,Tim ,Lars,Tim and Lars are active people and want a dog that matches their lifestyle.,“Should we adopt this puppy?”,“It's very energetic.”
+16,negative,Tim ,Lars,Tim and Lars are very busy and don’t have time for a high maintenance pet.,“Should we adopt this puppy?”,“It's very energetic.”
+16,neutral,Tim ,Lars,Tim and Lars want to adopt a dog.,“Should we adopt this puppy?”,“It's very energetic.”
+17,positive,Lisa,Anna,Lisa and Anna know that Lisa is looking for regular social activities.,“Do you want to join the book club?”,“They meet every week.”
+17,negative,Lisa,Anna,Lisa and Anna know that Lisa has a really busy schedule. ,“Do you want to join the book club?”,“They meet every week.”
+17,neutral,Lisa,Anna,Lisa is considering joining Anna’s book club.,“Do you want to join the book club?”,“They meet every week.”
+18,positive,Julia,Mark,Julia and Mark love being outside and enjoy outdoor events in summer.,“Should we buy tickets for the music festival?”,“It's an outdoor venue.”
+18,negative,Julia,Mark,Julia and Mark don’t enjoy outdoor events because of the risk of rain.,“Should we buy tickets for the music festival?”,“It's an outdoor venue.”
+18,neutral,Julia,Mark,Julia and Mark are looking at concert options.,“Should we buy tickets for the music festival?”,“It's an outdoor venue.”
+19,positive,Sophie,Dan,Sophie and Dan are looking for an apartment with good views.,“Should we rent the apartment with the view?”,“It's on the top floor.”
+19,negative,Sophie,Dan,Sophie and Dan don’t like taking many stairs. ,“Should we rent the apartment with the view?”,“It's on the top floor.”
+19,neutral,Sophie,Dan,Sophie and Dan are moving and debating which apartment to get. ,“Should we rent the apartment with the view?”,“It's on the top floor.”
+20,positive,Olivia,Ryan,Olivia and Ryan have been wanting a regular date night activity.,“Should we sign up for the cooking class?”,“It meets every Tuesday evening.”
+20,negative,Olivia,Ryan,Olivia and Ryan have a dancing class on Tuesday nights.,“Should we sign up for the cooking class?”,“It meets every Tuesday evening.”
+20,neutral,Olivia,Ryan,Olivia and Ryan are thinking of new activities to do.,“Should we sign up for the cooking class?”,“It meets every Tuesday evening.”
+21,positive,Lisa,Tom,Lisa and Tom are active people and enjoy going on long walks.,“Should we walk to the restaurant?”,“It's about two miles away.”"
+21,negative,Lisa,Tom,Lisa and Tom both have bad knees.,“Should we walk to the restaurant?”,“It's about two miles away.”
+21,neutral,Lisa,Tom,Lisa and Tom are deciding how to get to dinner.,“Should we walk to the restaurant?”,“It's about two miles away.”
+22,positive,Matt,Karl,Matt and Karl have been working since 7am already.,“Should we take a lunch break now?”,“The clock just struck noon.”
+22,negative,Matt,Karl,Matt and Karl want to get as much work done as they can before they take a lunch break.,“Should we take a lunch break now?”,“The clock just struck noon.”
+22,neutral,Matt,Karl,Matt and Karl are talking about when to take a break.,“Should we take a lunch break now?”,“The clock just struck noon.”
+23,positive,Amy,Paula,Amy and Paula want to see every art exhibit in the city. ,“Should we go to that art exhibit?”,“It closes this weekend.”
+23,negative,Amy,Paula,Amy and Paula are very busy this week.,“Should we go to that art exhibit?”,“It closes this weekend.”
+23,neutral,Amy,Paula,Amy and Paula are talking about weekend activities. ,“Should we go to that art exhibit?”,“It closes this weekend.”
+24,positive,Ally,Jane,Ally and Jane have a ritual of always drinking wine on Tuesdays. ,“Do you want to share a bottle of wine?”,“It’s Tuesday evening.”
+24,negative,Ally,Jane,Ally and Jane have to work early on Wednesday morning.,“Do you want to share a bottle of wine?”,“It’s Tuesday evening.”
+24,neutral,Ally,Jane,Ally and Jane are debating what drinks to order.,“Do you want to share a bottle of wine?”,“It’s Tuesday evening.”
+25,positive,Abby,Marc,Abby and Marc both love reading all kinds of romance novels.,“Do you want to borrow the book from me?”,“It’s a romance novel.”
+25,negative,Abby,Marc,Abby and Marc both know that Marc hates romance novels.,“Do you want to borrow the book from me?”,“It’s a romance novel.”
+25,neutral,Abby,Marc,Amy and Marc are talking about books.,“Do you want to borrow the book from me?”,“It’s a romance novel.”
+26,positive,Lilly,Mia,Lilly and Mia both know that Martin goes silent when he is angry at someone.,“Do you think Martin is mad at me?”,“He was quiet today.”
+26,negative,Lilly,Mia,Lilly and Mia both know that Martin usually shouts very loudly when he is angry at someone.,“Do you think Martin is mad at me?”,“He was quiet today.”
+26,neutral,Lilly,Mia,Lilly and Mia are talking about their friend Martin.,“Do you think Martin is mad at me?”,“He was quiet today.”
+27,positive,Polly,Tim,Polly and Tim know that Sarah tends to stay late when she’s passionate about her work.,“Does Sarah like her new job?”,“She’s been working late every night.”
+27,negative,Polly,Tim,Polly and Tim know that Sarah only works late when she’s stressed.,“Does Sarah like her new job?”,“She’s been working late every night.”
+27,neutral,Polly,Tim,Polly and Tim know that Sarah started a new position last month.,“Does Sarah like her new job?”,“She’s been working late every night.”
+28,positive,Ben,Max,Ben and Max’s boss always brings baked goods when she is happy.,“Is the boss in a good mood today?”,“She brought donuts for everyone.”
+28,negative,Ben,Max,Ben and Max’s boss only brings baked goods when she is trying to apologize for bad news.,“Is the boss in a good mood today?”,“She brought donuts for everyone.”
+28,neutral,Ben,Max,Ben and Max are talking about their boss.,“Is the boss in a good mood today?”,“She brought donuts for everyone.”
+29,positive,Anna,David,Anna and David know detailed feedback means that the reader resonated with the material.,“Did Professor Chen like your thesis proposal?”,“She gave me three pages of comments.”
+29,negative,Anna,David,Anna and David think excessive comments signal major problems.,“Did Professor Chen like your thesis proposal?”,“She gave me three pages of comments.”
+29,neutral,Anna,David,Anna and David are talking about David’s thesis meeting.,“Did Professor Chen like your thesis proposal?”,“She gave me three pages of comments.”
+30,positive,Erik,Meredith,Erik and Meredith love Jake's spacious house and great parties.,“Are you going to the party on Saturday?”,“It's at Jake's place.”
+30,negative,Erik,Meredith,Erik and Meredith find Jake's parties awkward and uncomfortable.,“Are you going to the party on Saturday?”,“It's at Jake's place.”
+30,neutral,Erik,Meredith,Erik and Meredith are discussing weekend plans.,“Are you going to the party on Saturday?”,“It's at Jake's place.”
