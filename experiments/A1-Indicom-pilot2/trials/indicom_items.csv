@@ -47,9 +47,9 @@ Item,Context Type,speaker1,speaker2,contextsentence,polarquestion,indirectanswer
 16,positive,Tim ,Lars,Tim and Lars are active people and want a dog that matches their lifestyle.,“Should we adopt this puppy?”,“It's very energetic.”
 16,negative,Tim ,Lars,Tim and Lars are very busy and don’t have time for a high maintenance pet.,“Should we adopt this puppy?”,“It's very energetic.”
 16,neutral,Tim ,Lars,Tim and Lars want to adopt a dog.,“Should we adopt this puppy?”,“It's very energetic.”
-17,positive,Lisa,Anna,Lisa and Anna know that Lisa is looking for regular social activities.,“Do you want to join the book club?”,“They meet every week.”
-17,negative,Lisa,Anna,Lisa and Anna know that Lisa has a really busy schedule. ,“Do you want to join the book club?”,“They meet every week.”
-17,neutral,Lisa,Anna,Lisa is considering joining Anna’s book club.,“Do you want to join the book club?”,“They meet every week.”
+17,positive,Anna,Lisa,Lisa and Anna know that Lisa is looking for regular social activities.,“Do you want to join the book club?”,“They meet every week.”
+17,negative,Anna,Lisa,Lisa and Anna know that Lisa has a really busy schedule. ,“Do you want to join the book club?”,“They meet every week.”
+17,neutral,Anna,Lisa,Lisa is considering joining Anna’s book club.,“Do you want to join the book club?”,“They meet every week.”
 18,positive,Julia,Mark,Julia and Mark love being outside and enjoy outdoor events in summer.,“Should we buy tickets for the music festival?”,“It's an outdoor venue.”
 18,negative,Julia,Mark,Julia and Mark don’t enjoy outdoor events because of the risk of rain.,“Should we buy tickets for the music festival?”,“It's an outdoor venue.”
 18,neutral,Julia,Mark,Julia and Mark are looking at concert options.,“Should we buy tickets for the music festival?”,“It's an outdoor venue.”
