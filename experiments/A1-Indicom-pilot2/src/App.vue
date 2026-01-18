@@ -102,6 +102,7 @@ const conditions = ["positive", "negative", "neutral"];
 const itemIDs = _.range(1, 31);
 const sampledIDs = _.sampleSize(itemIDs, 9);
 const triples = _.chunk(sampledIDs, 3);
+const shuffledAttention = _.shuffle(cleanAttention);
 
 //build the sampled triples
 const sampledTriples = triples.map((triple, tIndex) => {
@@ -122,7 +123,7 @@ const sampledTriples = triples.map((triple, tIndex) => {
   trials.forEach(t => (t.trialType = 'main'));
 
   //cycle so each triple gets a different attention check
-  const ac = cleanAttention[tIndex % cleanAttention.length];
+  const ac = shuffledAttention[tIndex % shuffledAttention.length];
   
   //mark trial type as attention check
   ac.trialType = 'attention'; 
