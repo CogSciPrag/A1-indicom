@@ -15,6 +15,7 @@ jobs:
         folder:
           - ./experiments/A1-Indicom-pilot1
           - ./experiments/A1-Indicom-pilot2
+          - ./experiments/A1-Indicom-pilot3
 
     runs-on: ubuntu-latest
     steps:
