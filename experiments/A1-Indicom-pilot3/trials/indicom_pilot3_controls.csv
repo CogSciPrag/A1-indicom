@@ -1,10 +1,10 @@
-item;condition;itemName;participantQuestion;contextSentence;correctAnswer;incorrectAnswer;polarQuestion;indirectAnswer;
-c1;control;gardening;“What kind of gardening do you like to do?”;“I grow my own vegetables.”;Growing vegetables.;Growing herbs.;“Do you cook using your own vegetables?”;“I love to make vegetable soups with them.” ;
-c2;control;baking;“What do you like to bake?”;“I mostly bake cakes and pastries.”;Baking cake and pastries.;Baking sourdough bread.;“Do you sell any of your baked goods?”;“They all end up with my family and friends.”;
-c3;control;painting;“What colours do you paint with?”;“I like to paint with watercolours.”;Painting with watercolours.;Painting with oil paints.;“Do you paint portraits?”;“I usually paint landscapes.”;
-cc4;control;photography;“What sort of photography are you into?”;“I mainly do portrait photography.”;Doing portrait photography.;Doing nature photography.;“Do you do photography professionally?”;“So far no one has paid me for it.”;
-c5;control;coding;“What kind of coding do you like to do?”;“I spend a lot of time working on new software.”;Working on new software.;Working on data analysis.;“Do you ever make your own apps?”;“I have made a few apps before.”;
-c6;control;dancing;“What kind of dancing do you do?”;“I do tap dance every single Friday.”;Tap dancing.;Ballroom dancing.;“Wow, do you ever do performances?”;“Last winter we did one at our local theatre.”;
-c7;control;fishing;“Where do you like to go fishing?”;“I often go to the nearby lake.”;Fishing at the nearby lake.;Fishing at the nearby river.;“Do you cook any of the fish you catch?”;“I usually throw them back into the water.”;
-c8;control;knitting;“What kind of stuff do you like to knit?”;“I like to knit my own sweaters.”;Knitting sweaters.;Knitting gloves.;“Do you wear your own sweaters then?”;“Almost every day in winter.”;
-c9;control;travel;“What is your favourite mode of transport for travelling?”;“I really hate flying.”;Hating flying.;Loving flying. ;“Do you take the train then instead?”;“I mainly drive myself.” ;
+item;condition;itemName;participantQuestion;contextSentence;correctAnswer;incorrectAnswer;polarQuestion;indirectAnswer
+c1;control;gardening;“What kind of gardening do you like to do?”;“I grow my own vegetables.”;Growing vegetables;Growing herbs;“Do you cook using your own vegetables?”;“I love to make vegetable soups with them.” 
+c2;control;baking;“What do you like to bake?”;“I mostly bake cakes and pastries.”;Baking cake and pastries;Baking sourdough bread;“Do you sell any of your baked goods?”;“They all end up with my family and friends.”
+c3;control;painting;“What colours do you paint with?”;“I like to paint with watercolours.”;Painting with watercolours;Painting with oil paints;“Do you paint portraits?”;“I usually paint landscapes.”
+c4;control;photography;“What sort of photography are you into?”;“I mainly do portrait photography.”;Doing portrait photography;Doing nature photography;“Do you do photography professionally?”;“So far no one has paid me for it.”
+c5;control;coding;“What kind of coding do you like to do?”;“I spend a lot of time working on new software.”;Working on new software;Working on data analysis;“Do you ever make your own apps?”;“I have made a few apps before.”
+c6;control;dancing;“What kind of dancing do you do?”;“I do tap dance every single Friday.”;Tap dancing;Ballroom dancing;“Wow, do you ever do performances?”;“Last winter we did one at our local theatre.”
+c7;control;fishing;“Where do you like to go fishing?”;“I often go to the nearby lake.”;Fishing at the nearby lake;Fishing at the nearby river;“Do you cook any of the fish you catch?”;“I usually throw them back into the water.”
+c8;control;knitting;“What kind of stuff do you like to knit?”;“I like to knit my own sweaters.”;Knitting sweaters;Knitting gloves;“Do you wear your own sweaters then?”;“Almost every day in winter.”
+c9;control;travel;“What is your favourite mode of transport for travelling?”;“I really hate flying.”;Hating flying;Loving flying;“Do you take the train then instead?”;“I mainly drive myself.” 

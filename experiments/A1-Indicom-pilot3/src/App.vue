@@ -16,11 +16,11 @@
 
     <Screen :title="'Instructions'">
       
-      <p> You recently moved to a new town and don’t know anyone there apart from your childhood friend John, who has been living in this town for a while already.</p> 
+      <p> You recently moved to a new town and don’t know anyone there apart from your childhood friend John, who has been living in town for a while already.</p> 
 
-      <p> John offered to help you meet new people, and he is convinced that you will get along with some of his friends, so he is throwing a party for you to speed-date his friends.</p> 
+      <p> John has offered to help you meet new people, and he is convinced that you will get along with some of his friends, so he is throwing a party for you to speed-date his friends.</p> 
 
-      <p> Now, at this get-together, John introduces you to his friends one after another, telling you about his friends' hobbies and activities they like to do. Since the goal is to find some people to do activities with throughout the week, you have researched a bunch of events and activities happening in the town that you could do together with them.</p>
+      <p> Now, at this party, John introduces you to his friends one after another, telling you about his friends' hobbies and activities. Since your goal is to find some people to do activities with throughout the week, you have researched a bunch of events and activities happening in the town that you could do together with them.</p>
 
       <button @click="startTrial(); $magpie.nextScreen()">next</button>
 
