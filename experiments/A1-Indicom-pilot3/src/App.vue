@@ -69,6 +69,15 @@
                 v-model="$magpie.measurements['comment']"
               ></textarea>
             </div>
+          
+        <Record :data="{
+          trialNum: currentTrialIndex,
+          itemID: selectedItem.item,
+          itemName: selectedItem.itemName,
+          condition: selectedItem.condition,
+          contextType: selectedItem.contextType,
+          comment: $magpie.measurements['comment'] || null
+        }" />
 
       </Slide>
       </Screen>
@@ -288,7 +297,7 @@ const names = [
   { name: "Bill", pronoun: "He", object: "him" },
   { name: "Bo", pronoun: "He", object: "him" },
   { name: "Tom", pronoun: "He", object: "him" },
-  { name: "Andreas", pronoun: "He", object: "him" }
+  { name: "Erik", pronoun: "He", object: "him" }
 ];
 const shuffledNames = _.shuffle(names); //shuffle the names into a random order 
 const CONTROL_INDICES = [0, 4, 7];
