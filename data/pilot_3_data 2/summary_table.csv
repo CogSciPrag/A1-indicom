@@ -1,0 +1,9 @@
+"informationStatus","contextType","n","mean","median","mode","sd"
+"at-issue-explicit","positive",15,4.8,6,7,2.24
+"at-issue-explicit","negative",15,2.8,3,1,1.78
+"at-issue-implicit","positive",15,4.53,5,1,2.17
+"at-issue-implicit","negative",15,3.13,2,1,2.45
+"no-longer-at-issue","positive",15,3.67,4,1,2.32
+"no-longer-at-issue","negative",15,3,2,1,2.1
+"never-at-issue","positive",15,4.87,5,7,2.1
+"never-at-issue","negative",15,3.93,3,1,2.34

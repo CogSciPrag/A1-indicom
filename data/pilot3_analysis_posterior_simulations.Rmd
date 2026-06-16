@@ -1,0 +1,612 @@
+---
+title: "pilot_3_data_analysis"
+output: html_document
+date: "2026-04-20"
+---
+
+```{r}
+# load packages
+
+library(tidyverse)
+library(ggbeeswarm)
+library(brms)
+library(tidyboot)
+library(tidyjson)
+library(tidybayes)
+library(patchwork)
+library(GGally)
+library(cowplot)
+library(BayesFactor)
+library(aida)   # custom helpers: https://github.com/michael-franke/aida-package
+library(faintr) # custom helpers: https://michael-franke.github.io/faintr/index.html
+library(cspplot)
+library(knitr)
+library(ggplot2)
+library(dplyr)
+library(gtools)
+library(Hmisc)
+library(brms)
+
+##################################################
+
+# these options help Stan run faster
+options(mc.cores = parallel::detectCores(),
+        brms.backend = "cmdstanr")
+
+# use the CSP-theme for plotting
+theme_set(theme_csp())
+
+# global color scheme from CSP
+project_colors = cspplot::list_colors() |> pull(hex)
+
+# setting theme colors globally
+scale_colour_discrete <- function(...) {
+  scale_colour_manual(..., values = project_colors)
+}
+
+scale_fill_discrete <- function(...) {
+  scale_fill_manual(..., values = project_colors)
+}
+
+##################################################
+
+# open data from pilot3 
+data <- read.csv("../pilot_3_data/A1-Indicom-pilot-v3-results-collapsed.csv", sep=";") 
+
+# filter out control -> leave only main trials
+df_main <- data[data$condition !='control',]
+
+head(df_main)
+```
+
+## 
+
+```{r}
+
+#trim stray whitespace
+df_main$contextType       <- trimws(df_main$contextType)
+df_main$informationStatus <- trimws(df_main$informationStatus)
+
+#ensure correct types
+df_main$rating            <- as.numeric(df_main$rating)
+df_main$informationStatus <- factor(df_main$informationStatus, levels = c(
+  "at-issue-explicit", "at-issue-implicit", "no-longer-at-issue", "never-at-issue"
+))
+df_main$contextType <- factor(df_main$contextType, levels = c("positive", "negative"))
+
+
+#get means, median and mode
+mode_val <- function(x) {
+  x <- x[!is.na(x)]
+  as.numeric(names(sort(table(x), decreasing = TRUE))[1])
+}
+ 
+summary_table <- df_main %>%
+  group_by(informationStatus, contextType) %>%
+  summarise(
+    n      = n(),
+    mean   = round(mean(rating, na.rm = TRUE), 2),
+    median = median(rating, na.rm = TRUE),
+    mode   = mode_val(rating),
+    sd     = round(sd(rating, na.rm = TRUE), 2),
+    .groups = "drop"
+  ) %>%
+  arrange(informationStatus, contextType)
+ 
+print(summary_table, n = Inf)
+write.csv(summary_table, "summary_table.csv", row.names = FALSE)
+message("Summary table saved to summary_table.csv")
+
+
+
+
+
+```
+
+
+
+```{r }
+
+df_main$informationStatus <- recode(df_main$informationStatus,
+  "at-issue-explicit"  = "at-issue\nexplicit",
+  "at-issue-implicit"  = "at-issue\nimplicit",
+  "no-longer-at-issue" = "no-longer\nat-issue",
+  "never-at-issue"     = "never\nat-issue"
+)
+
+
+```
+```{r }
+# ── Plot 2: x = informationStatus, grouped by contextType ───────────────────
+p2 <- ggplot(df_main, aes(x = informationStatus, y = rating, fill = contextType)) +
+  stat_summary(
+    fun = mean,
+    geom = "bar",
+    position = position_dodge(0.9)
+  ) +
+  stat_summary(
+    fun.data = mean_cl_boot,
+    geom = "errorbar",
+    width = 0.2,
+    position = position_dodge(0.9)
+  ) +
+  labs(
+    x     = "Information Status",
+    y     = "Mean Rating",
+    fill  = "Context Type",
+    title = "Mean Ratings by Information Status and Context Type\n(95% Bootstrapped Confidence Intervals)"
+  ) +
+  theme_csp()
+ 
+print(p2)
+ggsave("plot2_across_informationStatus.png", plot = p2, width = 10, height = 6, dpi = 150)
+```
+
+
+
+
+
+
+```{r }
+
+
+# ── Participant mean ratings (overall) ───────────────────────────────────────
+pp_summary <- df_main %>%
+  group_by(submission_id) %>%
+  summarise(
+    mean_rating = mean(rating, na.rm = TRUE),
+    lower_ci    = smean.cl.boot(rating)[2],
+    upper_ci    = smean.cl.boot(rating)[3],
+    n           = n(),
+    .groups = "drop"
+  )
+ 
+ggplot(pp_summary, aes(x = reorder(submission_id, mean_rating), y = mean_rating)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = lower_ci, ymax = upper_ci), width = 0.2) +
+  coord_flip() +
+  theme_csp() +
+  labs(
+    x     = "Participant",
+    y     = "Mean Rating",
+    title = "Participant Mean Ratings"
+  )
+ 
+ggsave("plot_pp_overall.png", width = 8, height = 6, dpi = 150)
+
+```
+
+```{r }
+# ── Participant mean ratings by contextType ───────────────────────────────────
+pp_context_summary <- df_main %>%
+  group_by(submission_id, contextType) %>%
+  summarise(
+    mean_rating = mean(rating, na.rm = TRUE),
+    lower_ci    = smean.cl.boot(rating)[2],
+    upper_ci    = smean.cl.boot(rating)[3],
+    .groups = "drop"
+  )
+ 
+ggplot(pp_context_summary, aes(x = contextType, y = mean_rating)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = lower_ci, ymax = upper_ci), width = 0.2) +
+  facet_wrap(~ submission_id) +
+  theme_minimal() +
+  labs(
+    x     = "Context Type",
+    y     = "Mean Rating",
+    title = "Participant Mean Ratings by Context Type"
+  )
+ 
+ggsave("plot_pp_by_context.png", width = 12, height = 8, dpi = 150)
+
+```
+
+
+
+```{r, message=FALSE, warning=FALSE}
+
+
+ 
+df_main$informationStatus <- recode(df_main$informationStatus,
+  "at-issue\nexplicit"  = "at_issue_explicit",
+  "at-issue\nimplicit"  = "at_issue_implicit",
+  "no-longer\nat-issue" = "no_longer_at_issue",
+  "never\nat-issue"     = "never_at_issue"
+)
+
+
+# ── Model ────────────────────────────────────────────────────────────────────
+# informationStatus is the main predictor
+# contextType included as a control variable
+# random intercepts for participants and items
+ 
+model <- brm(
+  #rating ~ informationStatus + contextType + (1 | submission_id) + (1 | itemID),
+    rating ~ informationStatus * contextType + (1 + informationStatus * contextType | submission_id) + (1 | itemID),
+  data   = df_main,
+  family = cumulative(link = "logit"),
+  chains = 4,
+  cores  = 4,
+  iter   = 4000
+)
+ 
+summary(model)
+saveRDS(model, "pilot_model.rds")
+ 
+```
+```{r}
+
+draws <- df_main  %>% 
+  select(informationStatus, contextType) %>% 
+  unique() %>% 
+  tidybayes::add_linpred_draws( #use add_epred_draws() instead? -> expected ratings instead of log odds
+    model,
+    ndraws = 2000,#number of draws
+    re_formula = NA
+  )
+
+```
+
+
+```{r}
+deltas <- draws %>%
+  ungroup() %>%
+  select(.draw, informationStatus, contextType, .linpred) %>%
+  pivot_wider(
+    names_from = contextType,
+    values_from = .linpred
+  ) %>%
+  mutate(
+    delta = positive - negative #compute the difference between positive and negative per conditions
+  )
+```
+
+```{r}
+myVec_at_issue_explicit <- deltas %>%
+  filter(informationStatus == "at_issue_explicit") %>%
+  pull(delta)
+
+myVec_at_issue_implicit <- deltas %>%
+  filter(informationStatus == "at_issue_implicit") %>%
+  pull(delta)
+
+myVec_no_longer_at_issue <- deltas %>%
+  filter(informationStatus == "no_longer_at_issue") %>%
+  pull(delta)
+
+myVec_never_at_issue <- deltas %>%
+  filter(informationStatus == "never_at_issue") %>%
+  pull(delta)
+```
+
+
+```{r}
+hist(myVec_at_issue_explicit)
+hist(myVec_at_issue_implicit)
+hist(myVec_no_longer_at_issue)
+hist(myVec_never_at_issue)
+
+aida::summarize_sample_vector(myVec_at_issue_explicit)
+aida::summarize_sample_vector(myVec_at_issue_implicit)
+aida::summarize_sample_vector(myVec_no_longer_at_issue)
+aida::summarize_sample_vector(myVec_never_at_issue)
+
+
+```
+```{r}
+delta_comparisons <- deltas %>%
+  select(.draw, informationStatus, delta) %>%
+  pivot_wider(
+    names_from = informationStatus,
+    values_from = delta
+  ) %>%
+  mutate(
+    explicit_vs_nolonger =
+      at_issue_explicit - no_longer_at_issue,
+
+    explicit_vs_implicit =
+      at_issue_explicit - at_issue_implicit,
+
+    nolonger_vs_never =
+      no_longer_at_issue - never_at_issue,
+    
+    explicit_vs_never = 
+      at_issue_explicit - never_at_issue
+  )
+```
+
+```{r}
+myVec_explicit_vs_implicit <- delta_comparisons %>%
+  pull(explicit_vs_implicit)
+
+hist(myVec_explicit_vs_implicit)
+
+aida::summarize_sample_vector(myVec_explicit_vs_implicit)
+```
+95% credible interval includes 0 -> no evidence for a difference between explicit and implicit content
+
+```{r}
+myVec_at_issue_vs_nolonger <- delta_comparisons %>%
+  pull(explicit_vs_nolonger)
+
+hist(myVec_at_issue_vs_nolonger)
+
+aida::summarize_sample_vector(myVec_at_issue_vs_nolonger)
+```
+95% credible interval includes 0 -> no evidence for a difference between at-issue and not-at-issue 
+
+
+```{r}
+
+myVec_nolonger_vs_never <- delta_comparisons %>%
+  pull(nolonger_vs_never)
+
+hist(myVec_nolonger_vs_never)
+
+aida::summarize_sample_vector(myVec_nolonger_vs_never)
+```
+shows that there is very little difference between no longer at issue content (clausal NAI constructions) and never at issue content (presuppositions etc) -> suggests there is no difference within not-at-issue constructions 
+
+
+95% credible interval includes 0 -> no evidence for a difference 
+
+
+```{r}
+
+myVec_at_issue_vs_never <- delta_comparisons %>%
+  pull(explicit_vs_never)
+
+hist(myVec_at_issue_vs_never)
+
+aida::summarize_sample_vector(myVec_at_issue_vs_never)
+```
+
+CI includes 0 -> no evidence for effect (however this is the closest we got to it being not 0)
+
+----
+
+SAMPLE SIZE RATIONALE - HOW MANY PARTICIPANTS DO WE NEED
+
+idea: 
+
+
+
+```{r}
+#define participant number to test
+
+N <- 50
+
+items <- unique(df_main$itemID)
+```
+
+
+
+```{r}
+#set up design so that each participant sees all 8 conditions across 8 randomly sampled items
+
+set.seed(123)
+
+design <- map_dfr(
+  1:N,
+  function(p) {
+    
+    sample_items <- sample(items, 8, replace = FALSE)
+    
+    expand_grid(
+      submission_id = factor(p),
+      itemID = factor(sample_items, levels = items),
+      informationStatus = c(
+        "at_issue_explicit",
+        "at_issue_implicit",
+        "no_longer_at_issue",
+        "never_at_issue"
+      ),
+      contextType = c("positive", "negative")
+    )
+  }
+)
+
+design <- design %>%
+  mutate(
+    informationStatus = factor(
+      informationStatus,
+      levels = levels(df_main$informationStatus)
+    ),
+    contextType = factor(
+      contextType,
+      levels = levels(df_main$contextType)
+    )
+  )
+
+
+```
+
+```{r}
+str(design$informationStatus)
+str(design$contextType)
+```
+
+
+```{r}
+
+#generate 1000 posterior predictive draws -> predictions are the simulated observed ratings from 0 - 7 
+
+model <- readRDS("pilot_model.rds")
+
+pred <- design %>%
+  add_predicted_draws(
+    model,
+    ndraws = 1000,
+    re_formula = NULL,
+    allow_new_levels = TRUE
+  )
+
+
+```
+
+
+```{r}
+pred <- pred %>%
+  mutate(
+    .prediction = as.numeric(as.character(.prediction))
+  )
+```
+
+
+
+```{r}
+#compute within-participant polarity effects (the deltas)
+#positive - negative per participant x condition
+
+deltas <- pred %>%
+  select(
+    .draw,
+    submission_id,
+    itemID,
+    informationStatus,
+    contextType,
+    .prediction
+  ) %>%
+  pivot_wider(
+    id_cols = c(
+      .draw,
+      submission_id,
+      itemID,
+      informationStatus
+    ),
+    names_from = contextType,
+    values_from = .prediction
+  ) %>%
+  mutate(
+    delta = positive - negative
+  )
+```
+
+
+```{r}
+
+#aggregate deltas per condition (within each posterior draw)
+#this computes an average for each condition within one simulated experiment -> so that we get one value per condition per simulated experiment
+
+delta_summary <- deltas %>%
+  group_by(.draw, informationStatus) %>%
+  summarise(delta = mean(delta, na.rm = TRUE), .groups = "drop")
+
+```
+
+
+```{r}
+
+#reshape for contrasts
+
+delta_wide <- delta_summary %>%
+  pivot_wider(
+    names_from = informationStatus,
+    values_from = delta
+  )
+
+```
+
+```{r}
+delta_summary %>%
+  group_by(informationStatus) %>%
+  summarise(
+    mean = mean(delta),
+    sd = sd(delta)
+  )
+```
+
+
+
+```{r}
+
+#compute the three theoretical contrasts
+
+contrasts <- delta_wide %>%
+  mutate(
+    atissue_vs_never =
+      at_issue_explicit - never_at_issue,
+
+    atissue_vs_implicit =
+      at_issue_explicit - at_issue_implicit,
+
+    nolonger_vs_never =
+      no_longer_at_issue - never_at_issue
+  )
+
+```
+
+
+
+
+```{r}
+contrasts %>%
+  summarise(across(
+    c(atissue_vs_never, atissue_vs_implicit, nolonger_vs_never),
+    ~ quantile(.x, c(.025, .5, .975), na.rm = TRUE)
+  ))
+```
+
+
+
+```{r}
+
+#define the criterion -> 95% credible interval excludes 0
+
+detect_effect <- function(x) {
+  ci <- quantile(x, c(.025, .975))
+  (ci[1] > 0) | (ci[2] < 0)
+}
+
+```
+
+
+
+```{r}
+posterior_summary <- tibble(
+  contrast = c(
+    "atissue_vs_never",
+    "atissue_vs_implicit",
+    "nolonger_vs_never"
+  ),
+  p_gt_0 = c(
+    mean(contrasts$atissue_vs_never > 0),
+    mean(contrasts$atissue_vs_implicit > 0),
+    mean(contrasts$nolonger_vs_never > 0)
+  ),
+  mean = c(
+    mean(contrasts$atissue_vs_never),
+    mean(contrasts$atissue_vs_implicit),
+    mean(contrasts$nolonger_vs_never)
+  ),
+  ci_lower = c(
+    quantile(contrasts$atissue_vs_never, .025),
+    quantile(contrasts$atissue_vs_implicit, .025),
+    quantile(contrasts$nolonger_vs_never, .025)
+  ),
+  ci_upper = c(
+    quantile(contrasts$atissue_vs_never, .975),
+    quantile(contrasts$atissue_vs_implicit, .975),
+    quantile(contrasts$nolonger_vs_never, .975)
+  )
+)
+
+posterior_summary
+```
+
+
+
+
+```{r}
+delta_summary %>%
+  group_by(informationStatus) %>%
+  summarise(
+    mean = mean(delta),
+    sd = sd(delta),
+    q025 = quantile(delta, 0.025),
+    q975 = quantile(delta, 0.975)
+  )
+```
+
+
