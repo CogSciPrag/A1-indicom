@@ -17,6 +17,8 @@ jobs:
           - ./experiments/A1-Indicom-pilot2
           - ./experiments/A1-Indicom-pilot3
           - ./experiments/A1-Indicom-main
+          - ./experiments/A1-Indicom-dummy
+          
 
     runs-on: ubuntu-latest
     steps:

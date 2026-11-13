@@ -1,0 +1,1078 @@
+---
+title: "A1_indicom_main_analysis"
+output: html_document
+date: "2026-06-25"
+author: "amelierueeck"
+---
+
+```{r}
+# load packages
+
+library(tidyverse)
+library(ggbeeswarm)
+library(brms)
+library(tidyboot)
+library(tidyjson)
+library(tidybayes)
+library(patchwork)
+library(GGally)
+library(cowplot)
+library(BayesFactor)
+library(aida)   # custom helpers: https://github.com/michael-franke/aida-package
+library(faintr) # custom helpers: https://michael-franke.github.io/faintr/index.html
+library(cspplot)
+library(knitr)
+library(ggplot2)
+library(dplyr)
+library(gtools)
+library(Hmisc)
+library(purrr)
+library(purrr)
+library(bayestestR)
+
+
+##################################################
+
+# these options help Stan run faster
+options(mc.cores = parallel::detectCores(),
+        brms.backend = "cmdstanr")
+
+# use the CSP-theme for plotting
+theme_set(theme_csp())
+
+# global color scheme from CSP
+project_colors = cspplot::list_colors() |> pull(hex)
+
+# setting theme colors globally
+scale_colour_discrete <- function(...) {
+  scale_colour_manual(..., values = project_colors)
+}
+
+scale_fill_discrete <- function(...) {
+  scale_fill_manual(..., values = project_colors)
+}
+
+##################################################
+
+# open data from main run
+data <- read.csv("../indicom_main_data/results_Indicom-main-collapsed-N=75.csv", sep=";") 
+
+head(data)
+```
+
+
+
+```{r}
+table(data$controlCorrect, useNA = "ifany")
+str(data$controlCorrect)
+```
+
+```{r}
+# Count correct control trials per participant
+attention_summary <- data %>%
+  filter(condition == "control") %>%
+  group_by(submission_id) %>%
+  summarise(
+    n_control_correct = sum(controlCorrect == TRUE | controlCorrect == "True",
+                            na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Participants who failed (< 2 correct controls)
+failed_participants <- attention_summary %>%
+  filter(n_control_correct < 2)
+
+# Report
+n_failed <- nrow(failed_participants)
+
+cat("Participants failing attention checks:", n_failed, "\n")
+print(failed_participants)
+
+# Exclude them from the dataset
+data_clean <- data %>%
+  filter(!submission_id %in% failed_participants$submission_id)
+
+cat("Rows before exclusion:", nrow(data), "\n")
+cat("Rows after exclusion:", nrow(data_clean), "\n")
+cat("Participants remaining:",
+    n_distinct(data_clean$submission_id), "\n")
+```
+
+```{r}
+
+# Remove control trials from the already-cleaned dataset
+df_main <- data_clean %>%
+  filter(condition != "control")
+
+```
+
+```{r}
+cat("Participants in original data:",
+    n_distinct(data$submission_id), "\n")
+
+cat("Participants after attention-check exclusion:",
+    n_distinct(data_clean$submission_id), "\n")
+
+cat("Participants in main-trial dataset:",
+    n_distinct(df_main$submission_id), "\n")
+
+cat("Main trials:",
+    nrow(df_main), "\n")
+```
+
+```{r}
+df_main <- df_main %>%
+  filter(submission_id != 4275)
+
+cat("Participants remaining:",
+    n_distinct(df_main$submission_id), "\n")
+```
+
+```{r}
+
+#trim stray whitespace
+df_main$contextType       <- trimws(df_main$contextType)
+df_main$informationStatus <- trimws(df_main$informationStatus)
+
+#ensure correct types
+df_main$rating            <- as.numeric(df_main$rating)
+df_main$informationStatus <- factor(df_main$informationStatus, levels = c(
+  "at-issue-explicit", "at-issue-implicit", "no-longer-at-issue", "never-at-issue"
+))
+df_main$contextType <- factor(df_main$contextType, levels = c("positive", "negative"))
+
+
+#get means, median and mode
+mode_val <- function(x) {
+  x <- x[!is.na(x)]
+  as.numeric(names(sort(table(x), decreasing = TRUE))[1])
+}
+ 
+summary_table <- df_main %>%
+  group_by(informationStatus, contextType) %>%
+  summarise(
+    n      = n(),
+    mean   = round(mean(rating, na.rm = TRUE), 2),
+    median = median(rating, na.rm = TRUE),
+    mode   = mode_val(rating),
+    sd     = round(sd(rating, na.rm = TRUE), 2),
+    .groups = "drop"
+  ) %>%
+  arrange(informationStatus, contextType)
+ 
+print(summary_table, n = Inf)
+write.csv(summary_table, "summary_table.csv", row.names = FALSE)
+message("Summary table saved to summary_table.csv")
+
+```
+
+
+```{r}
+df_main$informationStatus <- recode(df_main$informationStatus,
+  "at-issue-explicit"  = "at-issue\nexplicit",
+  "at-issue-implicit"  = "at-issue\nimplicit",
+  "no-longer-at-issue" = "no-longer\nat-issue",
+  "never-at-issue"     = "never\nat-issue"
+)
+```
+
+
+```{r}
+df_hypothesis <- data.frame(
+  informationStatus = factor(
+    c(
+      "at-issue", "at-issue",
+      "no longer at-issue", "no longer at-issue",
+      "never at-issue", "never at-issue"
+    ),
+    levels = c("at-issue", "no longer at-issue", "never at-issue")
+  ),
+  contextType = factor(
+    c(
+      "positive", "negative",
+      "positive", "negative",
+      "positive", "negative"
+    ),
+    levels = c("positive", "negative")
+  ),
+  mean_rating = c(
+    6, 2,
+    5.5, 2.5,
+    4, 3
+  )
+)
+
+p2_hypothesis <- ggplot(
+  df_hypothesis,
+  aes(x = informationStatus, y = mean_rating, fill = contextType)
+) +
+  geom_bar(
+    stat = "identity",
+    position = position_dodge(0.9)
+  ) +
+  scale_y_continuous(
+    breaks = 1:7,
+    expand = c(0, 0)
+  ) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x = "Information Status",
+    y = "Mean Rating",
+    fill = "Context Type",
+    title = "Hypothesised Mean Ratings"
+  ) +
+  theme_csp()
+
+print(p2_hypothesis)
+
+ggsave(
+  "plot2_hypothesised_means.png",
+  plot = p2_hypothesis,
+  width = 10,
+  height = 6,
+  dpi = 150
+)
+```
+
+```{r}
+df_hypothesis <- data.frame(
+  informationStatus = factor(
+    c(
+      "at-issue", "at-issue",
+      "no longer at-issue", "no longer at-issue",
+      "never at-issue", "never at-issue"
+    ),
+    levels = c("at-issue", "no longer at-issue", "never at-issue")
+  ),
+  contextType = factor(
+    c(
+      "positive", "negative",
+      "positive", "negative",
+      "positive", "negative"
+    ),
+    levels = c("positive", "negative")
+  ),
+  mean_rating = c(
+    6, 1.5,
+    5.5, 2,
+    4, 3
+  )
+)
+
+p2_hypothesis <- ggplot(
+  df_hypothesis,
+  aes(x = informationStatus, y = mean_rating, fill = contextType)
+) +
+  geom_bar(
+    stat = "identity",
+    position = position_dodge(0.9)
+  ) +
+  labs(
+    x = "Information Status",
+    y = NULL,
+    fill = "Context Type",
+    title = "Hypothesised Pattern"
+  ) +
+  theme_csp() +
+  theme(
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank()
+  )
+
+print(p2_hypothesis)
+
+ggsave(
+  "plot2_hypothesised_means.png",
+  plot = p2_hypothesis,
+  width = 10,
+  height = 6,
+  dpi = 150
+)
+```
+
+```{r}
+
+df_hypothesis <- data.frame(
+  informationStatus = factor(
+    c(
+      "at-issue", "at-issue",
+      "no longer at-issue", "no longer at-issue",
+      "never at-issue", "never at-issue"
+    ),
+    levels = c("at-issue", "no longer at-issue", "never at-issue")
+  ),
+  contextType = factor(
+    c(
+      "positive", "negative",
+      "positive", "negative",
+      "positive", "negative"
+    ),
+    levels = c("positive", "negative")
+  ),
+  mean_rating = c(
+    6, 1.5,
+    6, 1.5,
+    6, 1.5
+  )
+)
+
+p2_hypothesis <- ggplot(
+  df_hypothesis,
+  aes(x = informationStatus, y = mean_rating, fill = contextType)
+) +
+  geom_bar(
+    stat = "identity",
+    position = position_dodge(0.9)
+  ) +
+  labs(
+    x = "Information Status",
+    y = NULL,
+    fill = "Context Type",
+    title = "Hypothesised Pattern"
+  ) +
+  theme_csp() +
+  theme(
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank()
+  )
+
+print(p2_hypothesis)
+
+ggsave(
+  "plot2_stalnakers_hypothesised_means.png",
+  plot = p2_hypothesis,
+  width = 10,
+  height = 6,
+  dpi = 150
+)
+```
+
+
+```{r}
+df_positive_line <- data.frame(
+  x = c(0.775, 1.775, 2.775),
+  mean_rating = c(6, 5.5, 4)
+)
+```
+
+
+```{r}
+p2_hypothesis <- ggplot(
+  df_hypothesis,
+  aes(x = informationStatus, y = mean_rating, fill = contextType)
+) +
+  geom_bar(
+    stat = "identity",
+    position = position_dodge(0.9)
+  ) +
+  
+  # Line showing the hypothesised decline for positive contexts
+  geom_line(
+  data = df_positive_line,
+  aes(x = x, y = mean_rating, group = 1),
+  inherit.aes = FALSE,
+  linewidth = 1
+) +
+geom_point(
+  data = df_positive_line,
+  aes(x = x, y = mean_rating),
+  inherit.aes = FALSE,
+  size = 3
+) +
+  
+  scale_y_continuous(
+    breaks = 1:7,
+    expand = c(0, 0)
+  ) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x = "Information Status",
+    y = "Mean Rating",
+    fill = "Context Type",
+    title = "Hypothesised Mean Ratings"
+  ) +
+  theme_csp()
+
+print(p2_hypothesis)
+```
+
+
+```{r}
+p2 <- ggplot(df_main, aes(x = informationStatus, y = rating, fill = contextType)) +
+  stat_summary(
+    fun = mean,
+    geom = "bar",
+    position = position_dodge(0.9)
+  ) +
+  stat_summary(
+    fun.data = mean_cl_boot,
+    geom = "errorbar",
+    width = 0.2,
+    position = position_dodge(0.9)
+  ) +
+    scale_y_continuous(
+    breaks = 1:7,
+    expand = c(0, 0)
+  ) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x     = "Information Status",
+    y     = "Mean Rating",
+    fill  = "Context Type",
+    title = "Mean Ratings by Information Status and Context Type\n(95% Bootstrapped Confidence Intervals)"
+  ) +
+  theme_csp()
+ 
+print(p2)
+ggsave("plot2_across_informationStatus.png", plot = p2, width = 10, height = 6, dpi = 150)
+```
+
+
+```{r}
+p_violin <- ggplot(
+  df_main,
+  aes(
+    x = informationStatus,
+    y = rating,
+    fill = contextType
+  )
+) +
+  geom_violin(
+    position = position_dodge(0.9),
+    trim = FALSE,
+    alpha = 0.6
+  ) +
+  geom_boxplot(
+    position = position_dodge(0.9),
+    width = 0.15,
+    outlier.shape = NA
+  ) +
+  scale_y_continuous(
+    breaks = 1:7
+  ) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x = "Information status",
+    y = "Rating",
+    fill = "Context type"
+  ) +
+  theme_csp()
+
+print(p_violin)
+ggsave("violin_75.png", plot = p_violin, width = 10, height = 6, dpi = 150)
+```
+
+```{r}
+ggplot(
+  df_main,
+  aes(
+    informationStatus,
+    rating,
+    colour = contextType
+  )
+) +
+  geom_dotplot(
+    binaxis = "y",
+    stackdir = "center",
+    position = position_dodge(width = 0.8),
+    dotsize = 0.6
+  ) +
+  coord_cartesian(ylim = c(1, 7)) +
+  theme_csp()
+```
+
+```{r}
+p_beeswarm <- ggplot(
+  df_main,
+  aes(
+    x = informationStatus,
+    y = rating,
+    colour = contextType
+  )
+) +
+  geom_quasirandom(
+    dodge.width = 0.8,
+    alpha = 0.5
+  ) +
+  geom_boxplot(
+    aes(fill = contextType),
+    position = position_dodge(0.8),
+    width = 0.2,
+    alpha = 0.4,
+    outlier.shape = NA
+  ) +
+  scale_y_continuous(
+    breaks = 1:7
+  ) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x = "Information status",
+    y = "Rating"
+  ) +
+  theme_csp()
+
+print(p_beeswarm)
+ggsave("beeswarm_75.png", plot = p_beeswarm, width = 10, height = 6, dpi = 150)
+```
+```{r}
+p_beeswarm <- ggplot(
+  df_main,
+  aes(
+    x = informationStatus,
+    y = rating,
+    colour = contextType
+  )
+) +
+  geom_quasirandom(
+    dodge.width = 0.8,
+    alpha = 0.5
+  ) +
+  geom_boxplot(
+    aes(fill = contextType),
+    position = position_dodge(0.8),
+    width = 0.2,
+    alpha = 0.4,
+    outlier.shape = NA
+  ) +
+  scale_y_continuous(
+    breaks = 1:7
+  ) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x = "Information status",
+    y = "Rating",
+    colour = "Polarity",
+    fill = "Polarity"
+  ) +
+  theme_csp()
+
+print(p_beeswarm)
+ggsave("beeswarm_75.png", plot = p_beeswarm, width = 10, height = 6, dpi = 150)
+```
+
+
+```{r}
+table(df_main$informationStatus)
+```
+
+
+```{r} 
+#create dataset for plotting only at-issue & not at issue conditions
+plot_data <- df_main %>%
+  filter(informationStatus != "at-issue\nimplicit") %>%
+  mutate(
+    informationStatus = recode(
+      informationStatus,
+      "at-issue\nexplicit" = "At issue",
+      "no-longer\nat-issue" = "No longer at issue",
+      "never\nat-issue" = "Never at issue"
+    ),
+    informationStatus = factor(
+      informationStatus,
+      levels = c(
+        "At issue",
+        "No longer at issue",
+        "Never at issue"
+      )
+    )
+  )
+```
+
+
+```{r}
+plot_data <- df_main %>%
+  filter(informationStatus %in% c(
+    "at-issue\nexplicit",
+    "never\nat-issue"
+  )) %>%
+  mutate(
+    informationStatus = recode(
+      informationStatus,
+      "at-issue\nexplicit" = "At issue",
+      "never\nat-issue" = "Not at issue"
+    ),
+    informationStatus = factor(
+      informationStatus,
+      levels = c(
+        "At issue",
+        "Not at issue"
+      )
+    )
+  )
+```
+
+
+```{r}
+p6 <- ggplot(plot_data,
+             aes(x = informationStatus,
+                 y = rating,
+                 fill = contextType)) +
+  stat_summary(
+    fun = mean,
+    geom = "bar",
+    position = position_dodge(0.9)
+  ) +
+  stat_summary(
+    fun.data = mean_cl_boot,
+    geom = "errorbar",
+    width = 0.2,
+    position = position_dodge(0.9)
+  ) +
+    scale_y_continuous(
+    breaks = 1:7,
+    expand = c(0, 0)
+  ) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x = "Information status",
+    y = "Mean rating",
+    fill = "Context type",
+    title = "Mean Ratings by Information Status and Context Type\n(95% Bootstrapped Confidence Intervals)"
+  ) +
+  theme_csp()
+
+print(p6)
+
+ggsave(
+  "plot6_at_issue_vs_not_at_issue.png",
+  plot = p4,
+  width = 10,
+  height = 6,
+  dpi = 150
+)
+
+```
+```{r}
+p5 <- ggplot(plot_data,
+       aes(x = informationStatus,
+           y = rating,
+           colour = contextType,
+           group = contextType)) +
+  stat_summary(
+    fun = mean,
+    geom = "point",
+    position = position_dodge(width = 0.4),
+    size = 3
+  ) +
+  stat_summary(
+    fun.data = mean_cl_boot,
+    geom = "errorbar",
+    position = position_dodge(width = 0.4),
+    width = 0.15
+  ) +
+  scale_y_continuous(
+    limits = c(1, 7),
+    breaks = 1:7
+  ) +
+  theme_csp()
+
+print(p5)
+```
+```{r}
+#plot deltas directly -> pos - neg for each information status
+
+delta_raw <- plot_data %>%
+  mutate(contextType = tolower(trimws(contextType))) %>%
+  group_by(informationStatus, contextType) %>%
+  summarise(
+    mean_rating = mean(rating, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  tidyr::pivot_wider(
+    names_from = contextType,
+    values_from = mean_rating
+  ) %>%
+  mutate(
+    delta = positive - negative
+  )
+```
+
+```{r}
+p_delta_raw <- ggplot(delta_raw,
+                      aes(x = informationStatus,
+                          y = delta)) +
+  geom_hline(yintercept = 0,
+             linetype = "dashed",
+             colour = "grey50") +
+  geom_point(size = 3) +
+  labs(
+    x = "Information status",
+    y = "Mean rating difference (Pos − Neg)",
+    title = "Polarity delta by information status"
+  ) +
+  theme_csp()
+
+print(p_delta_raw)
+```
+
+```{r}
+ggsave("p_delta_raw.png", width = 8, height = 6, dpi = 150)
+```
+
+
+```{r}
+# ── Participant mean ratings (overall) ───────────────────────────────────────
+pp_summary <- df_main %>%
+  group_by(submission_id) %>%
+  summarise(
+    mean_rating = mean(rating, na.rm = TRUE),
+    lower_ci    = smean.cl.boot(rating)[2],
+    upper_ci    = smean.cl.boot(rating)[3],
+    n           = n(),
+    .groups = "drop"
+  )
+ 
+ggplot(pp_summary, aes(x = reorder(submission_id, mean_rating), y = mean_rating)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = lower_ci, ymax = upper_ci), width = 0.2) +
+  coord_flip() +
+  theme_csp() +
+  labs(
+    x     = "Participant",
+    y     = "Mean Rating",
+    title = "Participant Mean Ratings"
+  )
+ 
+ggsave("plot_pp_overall.png", width = 8, height = 6, dpi = 150)
+
+```
+
+
+```{r}
+pp_context_summary <- df_main %>%
+  group_by(submission_id, contextType) %>%
+  summarise(
+    mean_rating = mean(rating, na.rm = TRUE),
+    lower_ci    = smean.cl.boot(rating)[2],
+    upper_ci    = smean.cl.boot(rating)[3],
+    .groups = "drop"
+  )
+ 
+ggplot(pp_context_summary, aes(x = contextType, y = mean_rating)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = lower_ci, ymax = upper_ci), width = 0.2) +
+  facet_wrap(~ submission_id) +
+  theme_minimal() +
+  labs(
+    x     = "Context Type",
+    y     = "Mean Rating",
+    title = "Participant Mean Ratings by Context Type"
+  )
+ 
+ggsave("plot_pp_by_context.png", width = 12, height = 8, dpi = 150)
+```
+```{r}
+df_main$informationStatus <- recode(df_main$informationStatus,
+  "at-issue\nexplicit"  = "at_issue_explicit",
+  "at-issue\nimplicit"  = "at_issue_implicit",
+  "no-longer\nat-issue" = "no_longer_at_issue",
+  "never\nat-issue"     = "never_at_issue"
+)
+```
+
+------------------------
+TASK ADAPTABILITY CHECK: 
+
+
+```{r}
+#create dataset of only first trial per participant
+
+first_trials <- df_main %>%
+  filter(trialNum == 1)
+
+
+n_distinct(first_trials$submission_id)
+nrow(first_trials)
+
+```
+
+
+
+```{r}
+first_summary <- first_trials %>%
+  group_by(informationStatus, contextType) %>%
+  summarise(
+    mean_rating = mean(rating, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+  )
+
+first_summary
+```
+
+
+```{r}
+p_first <- ggplot(first_trials,
+                  aes(x = informationStatus,
+                      y = rating,
+                      fill = contextType)) +
+  stat_summary(
+    fun = mean,
+    geom = "bar",
+    position = position_dodge(0.9)
+  ) +
+  stat_summary(
+    fun.data = mean_cl_boot,
+    geom = "errorbar",
+    width = 0.2,
+    position = position_dodge(0.9)
+  ) +
+  scale_y_continuous(
+    breaks = 1:7
+  ) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x = "Information status",
+    y = "Mean rating (first trial only)",
+    title = "First-trial responses only"
+  ) +
+  theme_csp()
+
+print(p_first)
+ggsave("first-trial-only.png", width = 8, height = 6, dpi = 150)
+
+```
+
+
+____________________
+LAST TRIAL ONLY:
+
+```{r}
+
+#create dataset of only last trial per participant
+
+last_trials <- df_main %>%
+  filter(trialNum == 10)
+
+
+n_distinct(last_trials$submission_id)
+nrow(last_trials)
+
+
+```
+
+
+```{r}
+last_summary <- last_trials %>%
+  group_by(informationStatus, contextType) %>%
+  summarise(
+    mean_rating = mean(rating, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+  )
+
+last_summary
+```
+
+```{r}
+p_last <- ggplot(last_trials,
+                  aes(x = informationStatus,
+                      y = rating,
+                      fill = contextType)) +
+  stat_summary(
+    fun = mean,
+    geom = "bar",
+    position = position_dodge(0.9)
+  ) +
+  stat_summary(
+    fun.data = mean_cl_boot,
+    geom = "errorbar",
+    width = 0.2,
+    position = position_dodge(0.9)
+  ) +
+  scale_y_continuous(
+    breaks = 1:7
+  ) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x = "Information status",
+    y = "Mean rating (last trial only)",
+    title = "Last-trial responses only"
+  ) +
+  theme_csp()
+
+print(p_last)
+ggsave("last-trial-only.png", width = 8, height = 6, dpi = 150)
+
+```
+
+
+
+```{r}
+df_main <- df_main %>%
+  mutate(
+    submission_id = factor(submission_id),
+    itemID = factor(itemID),
+
+    informationStatus = factor(
+      informationStatus,
+      levels = c(
+        "at_issue_explicit",
+        "at_issue_implicit",
+        "no_longer_at_issue",
+        "never_at_issue"
+      )
+    ),
+
+    contextType = factor(
+      contextType,
+      levels = c("positive", "negative")
+    ),
+
+    rating = ordered(rating)
+  )
+```
+
+```{r}
+
+# ── Model ────────────────────────────────────────────────────────────────────
+# informationStatus is the main predictor
+# contextType included as a control variable
+# random intercepts for participants and items
+ 
+main_model <- brm(
+  rating ~ informationStatus * contextType +
+    (1 + informationStatus * contextType | submission_id) +
+    (1 | itemID),
+  data = df_main,
+  family = cumulative(link = "logit"),
+  chains = 4,
+  cores = 4,
+  iter = 4000,
+  warmup = 2000,
+)
+ 
+summary(main_model)
+saveRDS(main_model, "main_model.rds")
+```
+
+```{r}
+main_model <- readRDS("main_model-N=75.rds")
+```
+
+
+```{r}
+newdat <- tidyr::expand_grid(
+  informationStatus = levels(df_main$informationStatus),
+  contextType = levels(df_main$contextType)
+)
+
+draws <- newdat %>%
+  add_epred_draws(
+    main_model,
+    re_formula = NA
+  )
+```
+
+```{r}
+draws_expected <- draws %>%
+  mutate(
+    category_num = as.numeric(as.character(.category))
+  ) %>%
+  group_by(
+    .draw,
+    informationStatus,
+    contextType
+  ) %>%
+  summarise(
+    expected_rating = sum(category_num * .epred),
+    .groups = "drop"
+  )
+```
+
+```{r}
+contrasts <- draws_expected %>%
+  mutate(
+    condition = paste(
+      informationStatus,
+      contextType,
+      sep = "_"
+    )
+  ) %>%
+  select(
+    .draw,
+    condition,
+    expected_rating
+  ) %>%
+  pivot_wider(
+    names_from = condition,
+    values_from = expected_rating
+  ) %>%
+  mutate(
+
+    atissue_vs_never =
+      (
+        at_issue_explicit_positive -
+        at_issue_explicit_negative
+      ) -
+      (
+        never_at_issue_positive -
+        never_at_issue_negative
+      ),
+    
+    atissue_vs_no_longer =
+      (
+        at_issue_explicit_positive -
+        at_issue_explicit_negative
+      ) -
+      (
+        no_longer_at_issue_positive -
+        no_longer_at_issue_negative
+      ),
+    
+
+    explicit_vs_implicit =
+      (
+        at_issue_explicit_positive -
+        at_issue_explicit_negative
+      ) -
+      (
+        at_issue_implicit_positive -
+        at_issue_implicit_negative
+      ),
+
+    nolonger_vs_never =
+      (
+        no_longer_at_issue_positive -
+        no_longer_at_issue_negative
+      ) -
+      (
+        never_at_issue_positive -
+        never_at_issue_negative
+      )
+  )
+```
+
+```{r}
+extract_effect <- function(x) {
+
+  hdi <- bayestestR::hdi(x, ci = 0.95)
+
+  tibble(
+    mean = mean(x),
+    median = median(x),
+    hdi_low = hdi$CI_low,
+    hdi_high = hdi$CI_high,
+    posterior_positive = mean(x > 0),
+    posterior_negative = mean(x < 0),
+    pd <- as.numeric(bayestestR::p_direction(x))
+  )
+}
+```
+
+```{r}
+extract_effect(contrasts$atissue_vs_never)
+
+extract_effect(contrasts$atissue_vs_no_longer)
+
+extract_effect(contrasts$explicit_vs_implicit)
+
+extract_effect(contrasts$nolonger_vs_never)
+```
+
